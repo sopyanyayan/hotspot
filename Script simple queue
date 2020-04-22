@@ -1,0 +1,12 @@
+:local nama "$user";
+:local ips [/ip hotspot active get [find user="$nama"] address];
+:local server [/ip hotspot active get [find user="$nama"] server];
+:local datetime [/system clock get date];
+
+:local timedate [/system clock get time];
+
+:local profile [/ip hotspot user get [find name="$nama"] profile];
+
+:local host [/ip dhcp-server lease get [find address="$ips"] host-name];
+
+/queue simple add name="$address" comment=("Login at: [ $timedate ] From: [ $profile ] Hp: [ $host] Server: [$server ]") parent="CLIENT_BINDING" target="$address";
