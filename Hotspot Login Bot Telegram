@@ -1,0 +1,14 @@
+{
+:local nama "$user";
+:local ips [/ip hotspot active get [find user="$nama"] address];
+:local exp [/ip hotspot user get [find name="$nama"] comment];
+:local profile [/ip hotspot user get [find name="$nama"] profile];
+:local datetime "$[/system clock get date] $[/system clock get time]";
+:local mac [/ip hotspot active get [find user="$nama"] mac-address];
+:local host [/ip dhcp-server lease get [find address="$ips"] host-name];
+:local lby [/ip hotspot active get [find user="$nama"] login-by];
+:local limit [/ip hotspot active get [find user="$nama"] limit-bytes-total];
+:local totq [(($limit)/1048576)];
+:local useraktif [/ip hotspot active print count-only];
+/tool fetch url="https://api.telegram.org/botXXXXXX/sendMessage?chat_id=XXXXXX&text=====>> LOG-IN : $nama%0A- IP Address : $ips %0A- Mac Address : $mac%0A- Menggunakan : $host%0A- Login-by : $lby%0A- Kuota : $totq Mb%0A- Expired : $exp%0A- Masuk : $datetime%0A- User Profiles : $profile%0A- Users Yang Online : $useraktif user" mode=http keep-result=no;
+}
