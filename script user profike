@@ -1,0 +1,20 @@
+:local nama "$user";
+:local ips [/ip hotspot active get [find user="$nama"] address];
+:local server [/ip hotspot active get [find user="$nama"] server];
+:local profile [/ip hotspot user get [find name="$nama"] profile];
+
+:local host [/ip dhcp-server lease get [find address="$ips"] host-name];
+
+:local datetime [/system clock get date];
+
+:local timedate [/system clock get time];
+
+:local mac [/ip hotspot active get [find user="$nama"] mac-address];
+:local profile [/ip hotspot user get [find name="$nama"] profile];
+/system scheduler add interval=30d name="$nama" on-event="/ip hotspot ip-binding remove [find address=$address]; \r\n/queue simple remove [find name=$nama]; \r\n/ip hotspot cookie remove [find user=$nama]; \r\n/sys sche remove [find name=$nama];" start-time=$timedate comment="$datetime $timedate"
+:delay 1;
+/queue simple add name="$nama" comment=("Login at: [ $timedate ] From: [ $profile ] Hp: [ $host] Server: [$server ]") parent="ALL_TRAFICK" target="$address" max-limit=256K/512K;
+:delay 1;
+/ip hotspot ip-binding add comment="$nama $datetime $timedate" mac=$mac address=$ips type=bypassed;
+:delay 1;
+/ip hotspot user remove [find name="$nama"];
